@@ -14,6 +14,7 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Text;
 using Core.Utilities.Business;
+using Business.BusinessAspects.Autofac;
 
 namespace Business.Concrete
 {
@@ -27,6 +28,7 @@ namespace Business.Concrete
             _productDal = productDal;
             _logger = logger;
         }
+        [SecurityOperation("product.add,admin")]
         [ValidationAspect(typeof(ProductValidater))]
         public IResult Add(Product product)
         {

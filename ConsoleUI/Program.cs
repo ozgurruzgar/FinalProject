@@ -1,4 +1,5 @@
-﻿using Business.Concrete;
+﻿using Business.CCS;
+using Business.Concrete;
 using DataAccess.Concrete.EntityFramework;
 using DataAccess.Concrete.InMemoryProductDal;
 using System;
@@ -11,7 +12,7 @@ namespace ConsoleUI
         //HTTP Protokol : Bir kaynağa ulaşmak için izlediğimiz yol.
         static void Main(string[] args)
         {
-            ProductTest();
+           // ProductTest();
             //CategoryTest();
             //Data Transformation Object
         }
@@ -28,7 +29,7 @@ namespace ConsoleUI
 
         private static void ProductTest()
         {
-            ProductManager productManager = new ProductManager(new EFProductDal());
+            ProductManager productManager = new ProductManager(new EFProductDal(),new FileLogger());
 
             var result = productManager.GetProductDetails();
             if(result.Success==true)
