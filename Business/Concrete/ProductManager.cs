@@ -15,6 +15,8 @@ using System.Collections.Generic;
 using System.Text;
 using Core.Utilities.Business;
 using Business.BusinessAspects.Autofac;
+using Core.Aspects.Autofac.Caching;
+using System.Transactions;
 
 namespace Business.Concrete
 {
@@ -28,8 +30,10 @@ namespace Business.Concrete
             _productDal = productDal;
             _logger = logger;
         }
+        //[CacheAspect] key,value,pair
         [SecurityOperation("product.add,admin")]
         [ValidationAspect(typeof(ProductValidater))]
+        [CacheRemoveAspect("Get")]
         public IResult Add(Product product)
         {
             IResult result = BusinessRules.Run(CheckIfProductCountOfCategoryCorrect(product.CategoryId),
@@ -44,7 +48,8 @@ namespace Business.Concrete
                 return new SuccessResult(Messages.ProductAdded);
             }
         }
-
+        //[SecurityOperation("product.add,admin")]
+        [CacheAspect]
         public IDataResult<List<Product>> GetAll()
         {
             //İş Kodları
@@ -59,7 +64,7 @@ namespace Business.Concrete
         {
             return new SuccessDataResult<List<Product>>(_productDal.GetAll(p => p.CategoryId == id));
         }
-
+        [CacheAspect]
         public IDataResult<Product> GetById(int productId)
         {
             return new SuccessDataResult<Product>(_productDal.Get(p => p.ProductId == productId));
@@ -92,10 +97,26 @@ namespace Business.Concrete
             }
             return new SuccessResult();
         }
-
+        [ValidationAspect(typeof(ProductValidater))]
+        [CacheRemoveAspect("Get")]
         public IResult Update(Product product)
         {
-            throw new NotImplementedException();
+            var result = _productDal.GetAll(p => p.CategoryId == product.CategoryId).Count();
+            if (result <= 10)
+                return new SuccessResult();
+            else
+                return new ErrorResult(Messages.ProductCountOfCategoryError);
+        }
+
+        public IResult AddTransactionalTest(Product product)
+        {
+            Add(product);
+            if(product.UnitPrice<10)
+            {
+                throw new Exception("");
+            }
+            Add(product);
+            return null;
         }
     }
 }
