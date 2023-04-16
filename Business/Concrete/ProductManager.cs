@@ -1,5 +1,4 @@
 ﻿using Business.Abstract;
-using Business.CCS;
 using Business.Constants;
 using Business.ValidationRules.FluentValidation;
 using Core.Aspects.Autofac.Validation;
@@ -23,17 +22,14 @@ namespace Business.Concrete
     public class ProductManager : IProductService
     {
         IProductDal _productDal;
-        ILogger _logger;
-
-        public ProductManager(IProductDal productDal, ILogger logger)
+        public ProductManager(IProductDal productDal)
         {
             _productDal = productDal;
-            _logger = logger;
         }
         //[CacheAspect] key,value,pair
-        [SecurityOperation("product.add,admin")]
-        [ValidationAspect(typeof(ProductValidater))]
-        [CacheRemoveAspect("Get")]
+    //    [SecuredOperation("admin")]
+     //  [ValidationAspect(typeof(ProductValidater))]
+    //   [CacheRemoveAspect("Get")]
         public IResult Add(Product product)
         {
             IResult result = BusinessRules.Run(CheckIfProductCountOfCategoryCorrect(product.CategoryId),
@@ -48,8 +44,8 @@ namespace Business.Concrete
                 return new SuccessResult(Messages.ProductAdded);
             }
         }
-        //[SecurityOperation("product.add,admin")]
-        [CacheAspect]
+        //[SecuredOperation("product.add,admin")]
+       // [CacheAspect]
         public IDataResult<List<Product>> GetAll()
         {
             //İş Kodları
@@ -83,7 +79,7 @@ namespace Business.Concrete
         private IResult CheckIfProductCountOfCategoryCorrect(int categoryId)
         {
             var result = _productDal.GetAll(p => p.CategoryId == categoryId).Count();
-            if (result <= 10)
+            if (result <= 15)
                 return new SuccessResult();
             else
                 return new ErrorResult(Messages.ProductCountOfCategoryError);

@@ -12,8 +12,8 @@ namespace ConsoleUI
         //HTTP Protokol : Bir kaynağa ulaşmak için izlediğimiz yol.
         static void Main(string[] args)
         {
-           // ProductTest();
-            //CategoryTest();
+          // ProductTest();
+           // CategoryTest();
             //Data Transformation Object
         }
 
@@ -21,15 +21,15 @@ namespace ConsoleUI
         {
             CategoryManager categoryManager = new CategoryManager(new EFCategroyDal());
 
-            foreach (var c in categoryManager.GetAll())
+            foreach (var category in categoryManager.GetAll())
             {
-                Console.WriteLine(c.CategoryName);
+                Console.WriteLine(category.CategoryName);
             }
         }
 
         private static void ProductTest()
         {
-            ProductManager productManager = new ProductManager(new EFProductDal(),new FileLogger());
+            ProductManager productManager = new ProductManager(new EFProductDal());
 
             var result = productManager.GetProductDetails();
             if(result.Success==true)

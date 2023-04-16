@@ -1,22 +1,24 @@
-﻿using Core.Utilities.Interceptors;
-using Microsoft.AspNetCore.Http;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Text;
-using Castle.DynamicProxy;
-using Microsoft.Extensions.DependencyInjection;
-using Core.Utilities.IoC;
-using Core.Extension;
 using Business.Constants;
+using Castle.DynamicProxy;
+using Core.Extension;
+using Core.Utilities.Interceptors;
+using Core.Utilities.IoC;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Net.Http.Headers;
 
 namespace Business.BusinessAspects.Autofac
 {
-    public class SecurityOperation : MethodInterception
+    public class SecuredOperation : MethodInterception
     {
         private string[] _roles;
         private IHttpContextAccessor _httpContextAccessor;
 
-        public SecurityOperation(string roles)
+        public SecuredOperation(string roles)
         {
             _roles = roles.Split(',');
             _httpContextAccessor = ServiceTool.ServiceProvider.GetService<IHttpContextAccessor>();
@@ -34,6 +36,8 @@ namespace Business.BusinessAspects.Autofac
                 }
             }
             throw new Exception(Messages.AuthorizationDenied);
+
         }
     }
 }
+

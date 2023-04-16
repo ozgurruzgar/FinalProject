@@ -14,6 +14,18 @@ namespace DataAccess.Concrete.EntityFramework
         {
             optionsBuilder.UseSqlServer(@"Data Source=DESKTOP-1NLBACI\SQLSERVER;Database=Northwind;Trusted_Connection=true");
         }
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Category>().ToTable("Categories");
+            modelBuilder.Entity<Category>().Property(c=>c.CategoryId).HasColumnName("CategoryID");
+            modelBuilder.Entity<Category>().Property(c=>c.CategoryName).HasColumnName("CategoryName");
+
+            modelBuilder.Entity<Customer>().ToTable("Customers");
+            modelBuilder.Entity<Customer>().Property(c => c.CustomerId).HasColumnName("CustomerID");
+            modelBuilder.Entity<Customer>().Property(c => c.ContactName).HasColumnName("ContactName");
+            modelBuilder.Entity<Customer>().Property(c => c.Company).HasColumnName("CompanyName");
+            modelBuilder.Entity<Customer>().Property(c => c.City).HasColumnName("City");
+        }
 
         public DbSet<Product> Products { get; set; }
         public DbSet<Category> Categories { get; set; }
